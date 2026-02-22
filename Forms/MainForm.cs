@@ -22,6 +22,7 @@ namespace TaskManager
             ReloadProjects();
         }
 
+        // Metoda do przeładowania listy projektów
         private void ReloadProjects()
         {
             lvProjectsList.Items.Clear();
@@ -55,26 +56,18 @@ namespace TaskManager
             }
         }
 
+        // Obsługa zdarzenia kliknięcia na projekt w liście
         private void ProjectList_Click(object sender, EventArgs e)
         {
 
             if (lvProjectsList.SelectedItems.Count == 0)
                 return;
             
-            panelProjectView.Controls.Clear();
-            
             var selectedProject = (Models.Project)lvProjectsList.SelectedItems[0].Tag;
 
-            ProjectControl projectControl = new ProjectControl(selectedProject, _AppData);
-            projectControl.Tag = selectedProject;
-            projectControl.ProjectChanged += ProjectControl_Changed;
-
-            panelProjectView.Controls.Add(projectControl);
+            ShowProjectInPanel(selectedProject.Id);
 
         }
-
-
-
 
         // Obsługa zdarzenia dodawania projektu
         private void btnAddProject_Click(object sender, EventArgs e)
@@ -135,9 +128,37 @@ namespace TaskManager
             MessageBox.Show("Nie usunięto projektu!", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        // Obsługa zdarzenia zmiany wartości w ProjectControl
         private void ProjectControl_Changed(object sender, EventArgs e)
         {
+            var pc = (ProjectControl)sender;
+
+            if (!(pc.Tag is int projectId))
+                return;
+
+            var foundProject = _AppData.Projects.Find(p => p.Id == projectId);
+            if (foundProject == null)
+                return;
+
+            pc.ProjectChanged -= ProjectControl_Changed;
+
+            ShowProjectInPanel(foundProject.Id);
             ReloadProjects();
+            
+        }
+
+        // Metoda do wyświetlania szczegółów projektu w panelu
+        private void ShowProjectInPanel(int projectId)
+        {
+            panelProjectView.Controls.Clear();
+
+            var project = _AppData.Projects.Find(p => p.Id == projectId);
+            if (project == null)
+                return;
+            
+            var pc = new ProjectControl(project.Id, _AppData);
+            pc.ProjectChanged += ProjectControl_Changed;
+            panelProjectView.Controls.Add(pc);
         }
 
     }

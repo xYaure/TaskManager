@@ -13,56 +13,56 @@ namespace TaskManager.Controls
     public partial class ProjectControl : UserControl
     {
         private readonly Project _Project;
-        private AppData _AppData;
+        private readonly AppData _AppData;
         private bool _IsEditing = false;
+        public event EventHandler ProjectChanged;
 
-        public ProjectControl(Project project,AppData appData)
+        public ProjectControl(int projectId, AppData appData)
         {
             InitializeComponent();
-            _Project = appData.Projects.Find(p => p.Id == project.Id);
+            _Project = appData.Projects.Find(p => p.Id == projectId);
 
+            _AppData = appData;
+            this.Tag = _Project.Id;
+
+        }
+
+        private void btnProjectModifier_Click(object sender, EventArgs e)
+        {
+            _IsEditing = _IsEditing ? false : true;
+            
+            _AppData.UpdateProject(_Project);
+            ProjectChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void UpdateLayout()
+        {
             txtProjectName.ReadOnly = true;
             rtbProjectDescription.ReadOnly = true;
+            btnProjectModifier.Text = "Edytuj";
 
             txtProjectName.Text = _Project.Name;
             rtbProjectDescription.Text = _Project.Description;
 
-            label3.Text = _Project.CreatedAt.ToString();
-            label4.Text = _Project.UpdatedAt.ToString();
-            _AppData = appData;
-        }
+            rtbProjectDescription.Width = flpProjectHeader.ClientSize.Width - 10;
+            txtProjectName.Width = flpProjectHeader.ClientSize.Width - 10;
 
-        public void btnProjectModifier_Click(object sender, EventArgs e)
-        {
-            _IsEditing = _IsEditing ? false : true;
+            txtProjectName.BorderStyle = BorderStyle.None;
+            rtbProjectDescription.BorderStyle = BorderStyle.None;
 
             if (_IsEditing)
             {
                 txtProjectName.ReadOnly = false;
                 rtbProjectDescription.ReadOnly = false;
+
                 btnProjectModifier.Text = "Zapisz";
-                return;
             }
 
-            txtProjectName.ReadOnly = true;
-            rtbProjectDescription.ReadOnly = true;
-            btnProjectModifier.Text = "Edytuj";
-
-            UpdateProject();
-
-            _AppData.UpdateProject(_Project);
-            ProjectChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        private void UpdateProject()
+        private void ProjectControl_Load(object sender, EventArgs e)
         {
-            _Project.Name = txtProjectName.Text;
-            _Project.Description = rtbProjectDescription.Text;
-            _Project.UpdatedAt = DateTime.UtcNow;
-
-            label4.Text = _Project.UpdatedAt.ToString();
+            UpdateLayout();
         }
-
-        public event EventHandler ProjectChanged;
     }
 }
