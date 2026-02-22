@@ -41,22 +41,26 @@ namespace TaskManager.Controls
                 txtProjectName.ReadOnly = false;
                 rtbProjectDescription.ReadOnly = false;
                 btnProjectModifier.Text = "Zapisz";
+                return;
             }
-            else
-            {
-                txtProjectName.ReadOnly = true;
-                rtbProjectDescription.ReadOnly = true;
 
-                btnProjectModifier.Text = "Edytuj";
+            txtProjectName.ReadOnly = true;
+            rtbProjectDescription.ReadOnly = true;
+            btnProjectModifier.Text = "Edytuj";
 
-                _Project.Name = txtProjectName.Text;
-                _Project.Description = rtbProjectDescription.Text;
+            UpdateProject();
 
-                _AppData.UpdateProject(_Project);
-                this.Refresh();
+            _AppData.UpdateProject(_Project);
+            ProjectChanged?.Invoke(this, EventArgs.Empty);
+        }
 
-                ProjectChanged?.Invoke(this, EventArgs.Empty);
-            }
+        private void UpdateProject()
+        {
+            _Project.Name = txtProjectName.Text;
+            _Project.Description = rtbProjectDescription.Text;
+            _Project.UpdatedAt = DateTime.UtcNow;
+
+            label4.Text = _Project.UpdatedAt.ToString();
         }
 
         public event EventHandler ProjectChanged;

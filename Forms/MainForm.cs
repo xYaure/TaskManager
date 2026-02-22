@@ -1,5 +1,6 @@
 using TaskManager.Controls;
 using TaskManager.Data;
+using TaskManager.Models;
 
 namespace TaskManager
 {
@@ -36,7 +37,7 @@ namespace TaskManager
 
                 panelProjectView.Controls.Clear();
                 panelProjectView.Controls.Add(lbl);
-            }
+            }       
 
             foreach (var project in _AppData.Projects)
             {
@@ -65,11 +66,14 @@ namespace TaskManager
             var selectedProject = (Models.Project)lvProjectsList.SelectedItems[0].Tag;
 
             ProjectControl projectControl = new ProjectControl(selectedProject, _AppData);
+            projectControl.Tag = selectedProject;
             projectControl.ProjectChanged += ProjectControl_Changed;
 
             panelProjectView.Controls.Add(projectControl);
 
         }
+
+
 
 
         // Obsługa zdarzenia dodawania projektu
@@ -134,7 +138,6 @@ namespace TaskManager
         private void ProjectControl_Changed(object sender, EventArgs e)
         {
             ReloadProjects();
-
         }
 
     }
