@@ -38,10 +38,7 @@
             cmsProjectManage = new ContextMenuStrip(components);
             emiEditProject = new ToolStripMenuItem();
             emiDeleteProject = new ToolStripMenuItem();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
-            label4 = new Label();
+            panelProjectView = new Panel();
             flpProjectsPanel.SuspendLayout();
             panelAddProject.SuspendLayout();
             cmsProjectManage.SuspendLayout();
@@ -87,6 +84,7 @@
             lvProjectsList.TabIndex = 1;
             lvProjectsList.UseCompatibleStateImageBehavior = false;
             lvProjectsList.View = View.Details;
+            lvProjectsList.Click += ProjectList_Click;
             // 
             // ProjectId
             // 
@@ -101,67 +99,36 @@
             cmsProjectManage.ImageScalingSize = new Size(24, 24);
             cmsProjectManage.Items.AddRange(new ToolStripItem[] { emiEditProject, emiDeleteProject });
             cmsProjectManage.Name = "cmsProjectManage";
-            cmsProjectManage.Size = new Size(241, 101);
+            cmsProjectManage.Size = new Size(134, 68);
             // 
             // emiEditProject
             // 
             emiEditProject.Name = "emiEditProject";
-            emiEditProject.Size = new Size(240, 32);
+            emiEditProject.Size = new Size(133, 32);
             emiEditProject.Text = "Edytuj";
             emiEditProject.Click += emiEditProject_Click;
             // 
             // emiDeleteProject
             // 
             emiDeleteProject.Name = "emiDeleteProject";
-            emiDeleteProject.Size = new Size(240, 32);
+            emiDeleteProject.Size = new Size(133, 32);
             emiDeleteProject.Text = "Usuń";
             emiDeleteProject.Click += emiDeleteProject_Click;
             // 
-            // label1
+            // panelProjectView
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(508, 38);
-            label1.Name = "label1";
-            label1.Size = new Size(59, 25);
-            label1.TabIndex = 1;
-            label1.Text = "label1";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(512, 108);
-            label2.Name = "label2";
-            label2.Size = new Size(59, 25);
-            label2.TabIndex = 2;
-            label2.Text = "label2";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(514, 166);
-            label3.Name = "label3";
-            label3.Size = new Size(59, 25);
-            label3.TabIndex = 3;
-            label3.Text = "label3";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(516, 243);
-            label4.Name = "label4";
-            label4.Size = new Size(59, 25);
-            label4.TabIndex = 4;
-            label4.Text = "label4";
+            panelProjectView.Dock = DockStyle.Fill;
+            panelProjectView.Location = new Point(322, 0);
+            panelProjectView.Name = "panelProjectView";
+            panelProjectView.Size = new Size(1012, 862);
+            panelProjectView.TabIndex = 1;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1334, 862);
-            Controls.Add(label4);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(label1);
+            Controls.Add(panelProjectView);
             Controls.Add(flpProjectsPanel);
             Name = "MainForm";
             Text = "Form1";
@@ -169,7 +136,6 @@
             panelAddProject.ResumeLayout(false);
             cmsProjectManage.ResumeLayout(false);
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -183,9 +149,6 @@
         private ContextMenuStrip cmsProjectManage;
         private ToolStripMenuItem emiEditProject;
         private ToolStripMenuItem emiDeleteProject;
-        private Label label1;
-        private Label label2;
-        private Label label3;
-        private Label label4;
+        private Panel panelProjectView;
     }
 }

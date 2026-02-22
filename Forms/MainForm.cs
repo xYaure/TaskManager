@@ -1,3 +1,4 @@
+using TaskManager.Controls;
 using TaskManager.Data;
 
 namespace TaskManager
@@ -17,12 +18,26 @@ namespace TaskManager
             lvProjectsList.HideSelection = false;
             lvProjectsList.ShowItemToolTips = true;
 
-
+            ReloadProjects();
         }
 
         private void ReloadProjects()
         {
             lvProjectsList.Items.Clear();
+
+            if (_AppData.Projects.Count < 1)
+            {
+                Label lbl = new Label();
+
+                lbl.Text = "Brak projektów do wyświetlenia.";
+                lbl.Dock = DockStyle.Fill;
+                lbl.TextAlign = ContentAlignment.MiddleCenter;
+                lbl.Font = new Font(lbl.Font.FontFamily, 12, FontStyle.Italic);
+
+                panelProjectView.Controls.Clear();
+                panelProjectView.Controls.Add(lbl);
+            }
+
             foreach (var project in _AppData.Projects)
             {
                 ListViewItem item = new ListViewItem(project.Id.ToString());
@@ -37,11 +52,22 @@ namespace TaskManager
 
                 lvProjectsList.Items.Add(item);
             }
+        }
 
-            label1.Text = $"Nazwa: {_AppData.Projects[0].Name}";
-            label2.Text = $"Opis: {_AppData.Projects[0].Description}";
-            label3.Text = $"Data utworzenia: {_AppData.Projects[0].CreatedAt}";
-            label4.Text = $"Data modyfikowania: {_AppData.Projects[0].UpdatedAt}";
+        private void ProjectList_Click(object sender, EventArgs e)
+        {
+
+            if (lvProjectsList.SelectedItems.Count == 0)
+                return;
+            
+            panelProjectView.Controls.Clear();
+            
+            var selectedProject = (Models.Project)lvProjectsList.SelectedItems[0].Tag;
+
+            ProjectControl projectControl = new ProjectControl(selectedProject, _AppData);
+            projectControl.ProjectChanged += ProjectControl_Changed;
+
+            panelProjectView.Controls.Add(projectControl);
 
         }
 
@@ -104,5 +130,12 @@ namespace TaskManager
             }
             MessageBox.Show("Nie usunięto projektu!", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+
+        private void ProjectControl_Changed(object sender, EventArgs e)
+        {
+            ReloadProjects();
+
+        }
+
     }
 }
