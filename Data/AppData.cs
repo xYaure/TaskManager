@@ -7,17 +7,19 @@ namespace TaskManager.Data
 {
     public class AppData
     {
-        public List<Models.Project> Projects { get; set; }
+        private int _nextProjectId = 1;
+        public List<Project> Projects { get; set; }
         public List<Models.Task> Tasks { get; set; }
     
         public AppData()
         {
-            Projects = new List<Models.Project>();
+            Projects = new List<Project>();
             Tasks = new List<Models.Task>();
         }
 
-        public void AddProject(Models.Project project)
+        public void AddProject(Project project)
         {
+            project.Id = _nextProjectId++;
             Projects.Add(project);
         }
 
@@ -26,7 +28,7 @@ namespace TaskManager.Data
             Tasks.Add(task);
         }
 
-        public void UpdateProject(Models.Project project)
+        public void UpdateProject(Project project)
         {
             var existingProject = Projects.Find(p => p.Id == project.Id);
             if (existingProject != null)

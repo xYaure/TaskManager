@@ -6,7 +6,6 @@ namespace TaskManager.Models
 {
     public class Project
     {
-        private static int _nextId = 1;
         public int Id { get; set; }   
         public string Name { get; set; }
         public string Description { get; set; }
@@ -15,7 +14,6 @@ namespace TaskManager.Models
 
         public Project (string name, string description = "")
         {
-            Id = _nextId++;
             Name = name;
             Description = description;
             CreatedAt = DateTime.UtcNow;

@@ -13,14 +13,14 @@ namespace TaskManager.Forms
     public partial class ProjectForm : Form
     {
         private AppData _appData;
-        private Project _selectedProject;
-        private bool _isEditing;
+        private Project SelectedProject;
+        private bool IsEditing;
         public ProjectForm(AppData appData, Project selectedProject, bool isEditing)
         {
             InitializeComponent();
             _appData = appData;
-            _selectedProject = selectedProject;
-            _isEditing = isEditing;
+            SelectedProject = selectedProject;
+            IsEditing = isEditing;
 
             // Ustawienie tekstu przycisku i wypełnienie pól, jeśli edytujemy istniejący projekt
             btnAddProject.Text = isEditing ? "Zapisz zmiany" : "Dodaj projekt";
@@ -34,7 +34,7 @@ namespace TaskManager.Forms
             string Description = rtbDescription.Text;
 
             // Jeśli dodajemy nowy projekt, sprawdzamy, czy nazwa nie jest pusta
-            if (!Name.IsWhiteSpace() && !_isEditing)
+            if (!Name.IsWhiteSpace() && !IsEditing)
             {
                 Project newProject = new Project(Name, Description);
                 _appData.AddProject(newProject);
@@ -46,10 +46,10 @@ namespace TaskManager.Forms
                 DialogResult = DialogResult.Cancel;
 
             // Jeśli edytujemy istniejący projekt, aktualizujemy jego dane
-            _selectedProject.Name = Name;
-            _selectedProject.Description = Description;
+            SelectedProject.Name = Name;
+            SelectedProject.Description = Description;
 
-            _appData.UpdateProject(_selectedProject);
+            _appData.UpdateProject(SelectedProject);
             DialogResult = DialogResult.OK;
             Close();
         }

@@ -30,6 +30,8 @@ namespace TaskManager
 
                 if (project.Description.Length > 15)
                     item.ToolTipText = project.Description.Substring(0, 15) + "...";
+                else
+                    item.ToolTipText = project.Description;
 
                 item.Tag = project;
 
