@@ -1,4 +1,5 @@
 using TaskManager.Data;
+using TaskManager.Services;
 
 namespace TaskManager
 {
@@ -15,8 +16,9 @@ namespace TaskManager
             ApplicationConfiguration.Initialize();
 
             AppData appData = new AppData();
+            ProjectService projectService = new ProjectService(appData);
 
-            Application.Run(new MainForm(appData));
+            Application.Run(new MainForm(projectService));
         }
     }
 }

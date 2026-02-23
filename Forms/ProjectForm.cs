@@ -7,18 +7,19 @@ using System.Text;
 using System.Windows.Forms;
 using TaskManager.Data;
 using TaskManager.Models;
+using TaskManager.Services;
 
 namespace TaskManager.Forms 
 {
     public partial class ProjectForm : Form
     {
-        private AppData _appData;
+        private readonly ProjectService _projectService;
         private Project SelectedProject;
         private bool IsEditing;
-        public ProjectForm(AppData appData, Project selectedProject, bool isEditing)
+        public ProjectForm(ProjectService projectService, Project selectedProject, bool isEditing)
         {
             InitializeComponent();
-            _appData = appData;
+            _projectService = projectService;
             SelectedProject = selectedProject;
             IsEditing = isEditing;
 
@@ -37,7 +38,7 @@ namespace TaskManager.Forms
             if (!Name.IsWhiteSpace() && !IsEditing)
             {
                 Project newProject = new Project(Name, Description);
-                _appData.AddProject(newProject);
+                _projectService.Add(newProject);
                 DialogResult = DialogResult.OK;
                 Close();
                 return;
@@ -46,10 +47,14 @@ namespace TaskManager.Forms
                 DialogResult = DialogResult.Cancel;
 
             // Jeśli edytujemy istniejący projekt, aktualizujemy jego dane
-            SelectedProject.Name = Name;
-            SelectedProject.Description = Description;
+            Project project = new Project(Name, Description)
+            {
+                Id = SelectedProject.Id,
+                CreatedAt = SelectedProject.CreatedAt,
+                UpdatedAt = DateTime.Now
+            };
 
-            _appData.UpdateProject(SelectedProject);
+            _projectService.Update(project);
             DialogResult = DialogResult.OK;
             Close();
         }

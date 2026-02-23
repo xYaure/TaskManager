@@ -7,42 +7,49 @@ using System.Text;
 using System.Windows.Forms;
 using TaskManager.Data;
 using TaskManager.Models;
+using TaskManager.Services;
 
 namespace TaskManager.Controls
 {
     public partial class ProjectControl : UserControl
     {
         private readonly Project _Project;
-        private readonly AppData _AppData;
+        private readonly ProjectService _ProjectService;
         private bool _IsEditing = false;
-        public event EventHandler ProjectChanged;
 
-        public ProjectControl(int projectId, AppData appData)
+        public ProjectControl(int projectId, ProjectService projectService)
         {
             InitializeComponent();
-            _Project = appData.Projects.Find(p => p.Id == projectId);
+            _ProjectService = projectService;
+            _Project = _ProjectService.GetById(projectId);
 
-            _AppData = appData;
-            this.Tag = _Project.Id;
-
+            txtProjectName.Text = _Project.Name;
+            rtbProjectDescription.Text = _Project.Description;
         }
 
         private void btnProjectModifier_Click(object sender, EventArgs e)
         {
-            _IsEditing = _IsEditing ? false : true;
-            
-            _AppData.UpdateProject(_Project);
-            ProjectChanged?.Invoke(this, EventArgs.Empty);
+            _IsEditing = !_IsEditing;
+
+
+            if (!_IsEditing)
+            {
+                Project p = new Project(txtProjectName.Text, rtbProjectDescription.Text)
+                {
+                    Id = _Project.Id,
+                    CreatedAt = _Project.CreatedAt
+                };
+                _ProjectService.Update(p);
+            }
+
+            UpdateLayout();
+
         }
 
         private void UpdateLayout()
         {
-            txtProjectName.ReadOnly = true;
-            rtbProjectDescription.ReadOnly = true;
-            btnProjectModifier.Text = "Edytuj";
+            flpProjectHeader.SuspendLayout();
 
-            txtProjectName.Text = _Project.Name;
-            rtbProjectDescription.Text = _Project.Description;
 
             rtbProjectDescription.Width = flpProjectHeader.ClientSize.Width - 10;
             txtProjectName.Width = flpProjectHeader.ClientSize.Width - 10;
@@ -50,13 +57,27 @@ namespace TaskManager.Controls
             txtProjectName.BorderStyle = BorderStyle.None;
             rtbProjectDescription.BorderStyle = BorderStyle.None;
 
+            txtProjectName.BackColor = Color.FromName("Menu");
+            rtbProjectDescription.BackColor = Color.FromName("Menu");
+
+
             if (_IsEditing)
             {
                 txtProjectName.ReadOnly = false;
                 rtbProjectDescription.ReadOnly = false;
 
+                txtProjectName.BackColor = Color.White;
+                rtbProjectDescription.BackColor = Color.White;
+
                 btnProjectModifier.Text = "Zapisz";
+            } else
+            {
+                txtProjectName.ReadOnly = true;
+                rtbProjectDescription.ReadOnly = true;
+                btnProjectModifier.Text = "Edytuj";
             }
+
+            flpProjectHeader.ResumeLayout();
 
         }
 

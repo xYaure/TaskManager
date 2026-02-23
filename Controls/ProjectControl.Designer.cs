@@ -64,6 +64,7 @@
             // 
             // txtProjectName
             // 
+            txtProjectName.BackColor = SystemColors.Menu;
             txtProjectName.Font = new Font("Segoe UI", 10F);
             txtProjectName.Location = new Point(2, 23);
             txtProjectName.Margin = new Padding(2);
@@ -84,6 +85,7 @@
             // 
             // rtbProjectDescription
             // 
+            rtbProjectDescription.BackColor = SystemColors.Menu;
             rtbProjectDescription.Location = new Point(2, 71);
             rtbProjectDescription.Margin = new Padding(2);
             rtbProjectDescription.Name = "rtbProjectDescription";

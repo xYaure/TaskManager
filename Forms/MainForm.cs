@@ -1,16 +1,19 @@
 using TaskManager.Controls;
 using TaskManager.Data;
 using TaskManager.Models;
+using TaskManager.Services;
 
 namespace TaskManager
 {
     public partial class MainForm : Form
     {
-        private readonly AppData _AppData;
-        public MainForm(AppData appData)
+        private readonly ProjectService _projectService;
+        private int? _currentProjectId;
+        public MainForm(ProjectService projectService)
         {
             InitializeComponent();
-            _AppData = appData;
+            _projectService = projectService;
+            _projectService.ProjectChanged += ProjectService_ProjectsChanged;
 
             // Ustawienie szerokości kolumn i opcji wyświetlania
             lvProjectsList.Columns[1].Width = lvProjectsList.Width - lvProjectsList.Columns[0].Width;
@@ -18,16 +21,15 @@ namespace TaskManager
             lvProjectsList.GridLines = true;
             lvProjectsList.HideSelection = false;
             lvProjectsList.ShowItemToolTips = true;
-
-            ReloadProjects();
         }
 
         // Metoda do przeładowania listy projektów
         private void ReloadProjects()
         {
             lvProjectsList.Items.Clear();
+            var projects = _projectService.GetAll();
 
-            if (_AppData.Projects.Count < 1)
+            if (projects.Count < 1)
             {
                 Label lbl = new Label();
 
@@ -40,7 +42,7 @@ namespace TaskManager
                 panelProjectView.Controls.Add(lbl);
             }       
 
-            foreach (var project in _AppData.Projects)
+            foreach (var project in projects)
             {
                 ListViewItem item = new ListViewItem(project.Id.ToString());
                 item.SubItems.Add(project.Name);
@@ -50,7 +52,7 @@ namespace TaskManager
                 else
                     item.ToolTipText = project.Description;
 
-                item.Tag = project;
+                item.Tag = project.Id;
 
                 lvProjectsList.Items.Add(item);
             }
@@ -63,21 +65,20 @@ namespace TaskManager
             if (lvProjectsList.SelectedItems.Count == 0)
                 return;
             
-            var selectedProject = (Models.Project)lvProjectsList.SelectedItems[0].Tag;
+            _currentProjectId = (int?)lvProjectsList.SelectedItems[0].Tag;
 
-            ShowProjectInPanel(selectedProject.Id);
+            ShowProjectInPanel(_currentProjectId);
 
         }
 
         // Obsługa zdarzenia dodawania projektu
         private void btnAddProject_Click(object sender, EventArgs e)
         {
-            Forms.ProjectForm addProjectForm = new Forms.ProjectForm(_AppData, null, false);
+            Forms.ProjectForm addProjectForm = new Forms.ProjectForm(_projectService, null, false);
             addProjectForm.ShowDialog();
 
             if (addProjectForm.DialogResult == DialogResult.OK)
             {
-                ReloadProjects();
                 MessageBox.Show("Pomyślnie dodano projekt!", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
@@ -94,13 +95,18 @@ namespace TaskManager
                 return;
             }
 
-            var selectedProject = (Models.Project)lvProjectsList.SelectedItems[0].Tag;
-            Forms.ProjectForm editProjectForm = new Forms.ProjectForm(_AppData, selectedProject, true);
+            int selectedProjectId = (int)lvProjectsList.SelectedItems[0].Tag;
+
+            var selectedProject = _projectService.GetById(selectedProjectId);
+
+
+            Forms.ProjectForm editProjectForm = new Forms.ProjectForm(_projectService, selectedProject, true);
+
+
             editProjectForm.ShowDialog();
 
             if (editProjectForm.DialogResult == DialogResult.OK)
             {
-                ReloadProjects();
                 MessageBox.Show("Pomyślnie edytowano projekt!", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
@@ -116,50 +122,45 @@ namespace TaskManager
                 MessageBox.Show("Nie wybrano projektu!", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            var selectedProject = (Models.Project)lvProjectsList.SelectedItems[0].Tag;
+            var selectedProjectId = (int)lvProjectsList.SelectedItems[0].Tag;
+
+            var selectedProject = _projectService.GetById(selectedProjectId);
+
+            
             var confirmResult = MessageBox.Show($"Czy na pewno chcesz usunąć projekt '{selectedProject.Name}'?", "Potwierdzenie", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirmResult == DialogResult.Yes)
             {
-                _AppData.DeleteProject(selectedProject);
-                ReloadProjects();
+                _projectService.Delete(selectedProjectId);
                 MessageBox.Show("Pomyślnie usunięto projekt!", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
             MessageBox.Show("Nie usunięto projektu!", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        // Obsługa zdarzenia zmiany wartości w ProjectControl
-        private void ProjectControl_Changed(object sender, EventArgs e)
-        {
-            var pc = (ProjectControl)sender;
-
-            if (!(pc.Tag is int projectId))
-                return;
-
-            var foundProject = _AppData.Projects.Find(p => p.Id == projectId);
-            if (foundProject == null)
-                return;
-
-            pc.ProjectChanged -= ProjectControl_Changed;
-
-            ShowProjectInPanel(foundProject.Id);
-            ReloadProjects();
-            
-        }
 
         // Metoda do wyświetlania szczegółów projektu w panelu
-        private void ShowProjectInPanel(int projectId)
+        private void ShowProjectInPanel(int? projectId)
         {
             panelProjectView.Controls.Clear();
 
-            var project = _AppData.Projects.Find(p => p.Id == projectId);
+            if (_projectService.GetAll().Count < 1)
+                return;
+
+            var project = _projectService.GetById((int)projectId);
             if (project == null)
                 return;
             
-            var pc = new ProjectControl(project.Id, _AppData);
-            pc.ProjectChanged += ProjectControl_Changed;
+            var pc = new ProjectControl(project.Id, _projectService);
+
             panelProjectView.Controls.Add(pc);
         }
 
+        private void ProjectService_ProjectsChanged(object? sender, EventArgs e)
+        {
+            ReloadProjects();
+            
+            if(_currentProjectId.HasValue)
+                ShowProjectInPanel(_currentProjectId);
+        }
     }
 }
