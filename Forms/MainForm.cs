@@ -98,6 +98,7 @@ namespace TaskManager
             int selectedProjectId = (int)lvProjectsList.SelectedItems[0].Tag;
 
             var selectedProject = _projectService.GetById(selectedProjectId);
+            _currentProjectId = selectedProjectId;
 
 
             Forms.ProjectForm editProjectForm = new Forms.ProjectForm(_projectService, selectedProject, true);
@@ -125,8 +126,9 @@ namespace TaskManager
             var selectedProjectId = (int)lvProjectsList.SelectedItems[0].Tag;
 
             var selectedProject = _projectService.GetById(selectedProjectId);
+            _currentProjectId = selectedProjectId;
 
-            
+
             var confirmResult = MessageBox.Show($"Czy na pewno chcesz usunąć projekt '{selectedProject.Name}'?", "Potwierdzenie", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirmResult == DialogResult.Yes)
             {
