@@ -34,7 +34,11 @@
             label2 = new Label();
             rtbProjectDescription = new RichTextBox();
             btnProjectModifier = new Button();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            flpLeft = new FlowLayoutPanel();
+            flpRight = new FlowLayoutPanel();
             flpProjectHeader.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // flpProjectHeader
@@ -43,6 +47,7 @@
             flpProjectHeader.Controls.Add(txtProjectName);
             flpProjectHeader.Controls.Add(label2);
             flpProjectHeader.Controls.Add(rtbProjectDescription);
+            flpProjectHeader.Controls.Add(btnProjectModifier);
             flpProjectHeader.Dock = DockStyle.Top;
             flpProjectHeader.FlowDirection = FlowDirection.TopDown;
             flpProjectHeader.Location = new Point(0, 0);
@@ -95,20 +100,55 @@
             // 
             // btnProjectModifier
             // 
-            btnProjectModifier.Location = new Point(628, 420);
+            btnProjectModifier.Dock = DockStyle.Right;
+            btnProjectModifier.Location = new Point(435, 2);
             btnProjectModifier.Margin = new Padding(2);
             btnProjectModifier.Name = "btnProjectModifier";
-            btnProjectModifier.Size = new Size(78, 20);
+            btnProjectModifier.Size = new Size(78, 23);
             btnProjectModifier.TabIndex = 1;
             btnProjectModifier.Text = "Edytuj";
             btnProjectModifier.UseVisualStyleBackColor = true;
             btnProjectModifier.Click += btnProjectModifier_Click;
             // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 2;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Controls.Add(flpLeft, 0, 0);
+            tableLayoutPanel1.Controls.Add(flpRight, 1, 0);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(0, 177);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 1;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Size = new Size(708, 265);
+            tableLayoutPanel1.TabIndex = 2;
+            // 
+            // flpLeft
+            // 
+            flpLeft.AutoScroll = true;
+            flpLeft.Dock = DockStyle.Fill;
+            flpLeft.Location = new Point(3, 3);
+            flpLeft.Name = "flpLeft";
+            flpLeft.Size = new Size(348, 259);
+            flpLeft.TabIndex = 0;
+            // 
+            // flpRight
+            // 
+            flpRight.AutoScroll = true;
+            flpRight.Dock = DockStyle.Fill;
+            flpRight.Location = new Point(357, 3);
+            flpRight.Name = "flpRight";
+            flpRight.Size = new Size(348, 259);
+            flpRight.TabIndex = 1;
+            // 
             // ProjectControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(btnProjectModifier);
+            Controls.Add(tableLayoutPanel1);
             Controls.Add(flpProjectHeader);
             Margin = new Padding(2);
             Name = "ProjectControl";
@@ -116,6 +156,7 @@
             Load += ProjectControl_Load;
             flpProjectHeader.ResumeLayout(false);
             flpProjectHeader.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -127,5 +168,8 @@
         private TextBox txtProjectName;
         private Label label2;
         private RichTextBox rtbProjectDescription;
+        private TableLayoutPanel tableLayoutPanel1;
+        private FlowLayoutPanel flpLeft;
+        private FlowLayoutPanel flpRight;
     }
 }
